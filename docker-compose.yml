@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:8.0.25
+    container_name: mysql
+    expose:
+      - 3306
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sample
+    volumes:
+      - ./infrastructure/mysql/my.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./infrastructure/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - sample-data:/var/lib/mysql:cache
+    stop_grace_period: 1m
+
+volumes:
+  sample-data:
+    driver: local
