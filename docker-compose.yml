@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  app:
+    container_name: app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app:cache
+      - rust_dev_target:/app/target
+    working_dir: /app
+
   mysql:
     image: mysql:8.0.25
     container_name: mysql
@@ -19,5 +29,7 @@ services:
     stop_grace_period: 1m
 
 volumes:
+  rust_dev_target:
+    driver: local
   sample-data:
     driver: local
