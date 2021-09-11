@@ -3,13 +3,19 @@ version: "3"
 services:
   app:
     container_name: app
+    ports:
+      - 8080:8080
     build:
       context: ./
       dockerfile: Dockerfile
     volumes:
       - ./app:/app:cache
-      - rust_dev_target:/app/target
+      - rust-target:/app/target
+      - cargo-cache:/usr/local/cargo/registry
     working_dir: /app
+    depends_on:
+      - mysql
+    command: /bin/sh -c "cargo watch -x run"
 
   mysql:
     image: mysql:8.0.25
@@ -29,7 +35,9 @@ services:
     stop_grace_period: 1m
 
 volumes:
-  rust_dev_target:
+  rust-target:
+    driver: local
+  cargo-cache:
     driver: local
   sample-data:
     driver: local
