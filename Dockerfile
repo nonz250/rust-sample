@@ -1,7 +1,7 @@
-FROM rust:1.53.0-alpine3.13
+FROM rust:1.53.0
 
-RUN apk update
-RUN apk add alpine-sdk
+RUN apt-get update -y && apt-get upgrade -y
+RUN cargo install diesel_cli --no-default-features --features mysql
 RUN cargo install cargo-watch
 
 COPY ./app /app

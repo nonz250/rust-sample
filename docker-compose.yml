@@ -10,6 +10,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - APP_HOST=app:8080
+      - DATABASE_URL=mysql://root:secret@db/sample
     volumes:
       - ./app:/app:cache
       - rust-target:/app/target
@@ -28,7 +29,7 @@ services:
       - 127.0.0.1:3306:3306
     environment:
       TZ: Asia/Tokyo
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: sample
     volumes:
       - ./infrastructure/mysql/my.cnf:/etc/mysql/conf.d/mysql.cnf:ro
