@@ -8,20 +8,22 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      - APP_HOST=app:8080
     volumes:
       - ./app:/app:cache
       - rust-target:/app/target
       - cargo-cache:/usr/local/cargo/registry
     working_dir: /app
     depends_on:
-      - mysql
+      - db
     command: /bin/sh -c "cargo watch -x run"
+    networks:
+      internal-network:
 
-  mysql:
+  db:
     image: mysql:8.0.25
-    container_name: mysql
-    expose:
-      - 3306
+    container_name: db
     ports:
       - 127.0.0.1:3306:3306
     environment:
@@ -33,6 +35,12 @@ services:
       - ./infrastructure/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - sample-data:/var/lib/mysql:cache
     stop_grace_period: 1m
+    networks:
+      internal-network:
+
+networks:
+  internal-network:
+    driver: bridge
 
 volumes:
   rust-target:

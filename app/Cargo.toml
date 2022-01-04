@@ -10,4 +10,4 @@ actix-web = "3.3.2"
 
 [[bin]]
 name = "sample"
-path = "main.rs"
+path = "src/main.rs"
