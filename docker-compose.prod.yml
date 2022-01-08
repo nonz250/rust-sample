@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+  app:
+    container_name: app
+    ports:
+      - 80:80
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - APP_HOST=app:80
+      - DATABASE_URL=mysql://root:secret@db/sample
+    working_dir: /app
+    depends_on:
+      - db
+    command: /bin/sh -c "cargo run --release"
+    restart: always
+    networks:
+      internal-network:
+
+  db:
+    image: mysql:8.0.25
+    container_name: db
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: sample
+    volumes:
+      - ./infrastructure/mysql/my.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./infrastructure/mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - sample-data:/var/lib/mysql:cache
+    stop_grace_period: 1m
+    networks:
+      internal-network:
+
+networks:
+  internal-network:
+    driver: bridge
+
+volumes:
+  sample-data:
+    driver: local
