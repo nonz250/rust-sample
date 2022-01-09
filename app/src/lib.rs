@@ -6,3 +6,4 @@ pub mod schema;
 pub mod utils;
 pub mod routes;
 pub mod controllers;
+pub mod domain;
