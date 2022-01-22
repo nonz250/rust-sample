@@ -1,5 +1,4 @@
 use diesel::prelude::*;
-use diesel::RunQueryDsl;
 use ulid::Ulid;
 use crate::domain::post::post::Post;
 use crate::domain::post::post_identifier::PostIdentifier;
@@ -36,7 +35,7 @@ impl PostRepository for PostMySqlRepository {
             id: post.identifier(),
             title: post.title.title,
         };
-        diesel::insert_into(posts_schema::table)
+        diesel::replace_into(posts_schema::table)
             .values(&new_post)
             .execute(&connection)
             .expect("Error saving new posts.");
