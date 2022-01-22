@@ -1,56 +1,49 @@
 use diesel::prelude::*;
-use crate::domain::post::post::Post;
-use crate::domain::post::post_identifier::PostIdentifier;
-use crate::domain::post::post_title::PostTitle;
-use crate::models::Post as PostModel;
+use serde::Serialize;
+use crate::models::Post;
 use crate::schema::posts as posts_schema;
 use crate::utils::establish_connection;
+
+#[derive(Serialize)]
+pub struct PostReadModel {
+    identifier: u32,
+    title: String
+}
 
 pub struct GetPostMySqlQuery {}
 
 pub struct GetPostMockQuery {}
 
 pub trait GetPostQuery {
-    fn get_post() -> Post;
+    fn get_post() -> Vec<PostReadModel>;
 }
 
 impl GetPostQuery for GetPostMySqlQuery {
-    fn get_post() -> Post {
+    fn get_post() -> Vec<PostReadModel> {
         let connection = establish_connection();
 
-        let result = posts_schema::dsl::posts
-            .first::<PostModel>(&connection)
+        let results = posts_schema::dsl::posts
+            .load::<Post>(&connection)
             .expect("Error loading posts");
 
-        let post_id = PostIdentifier {
-            identifier: result.id
-        };
+        let mut posts = Vec::new();
 
-        let post_title = PostTitle {
-            title: result.title.to_string()
-        };
+        for result in results {
+            posts.push(PostReadModel {
+                identifier: result.id,
+                title: result.title
+            })
+        }
 
-        let post = Post {
-            identifier: post_id,
-            title: post_title
-        };
-
-        return post;
+        return posts;
     }
 }
 
 impl GetPostQuery for GetPostMockQuery {
-    fn get_post() -> Post {
-        let post_id = PostIdentifier {
-            identifier: 1
-        };
-        let post_title = PostTitle {
+    fn get_post() -> Vec<PostReadModel> {
+        return Vec::from([PostReadModel {
+            identifier: 1,
             title: "mock".to_string()
-        };
-        let post = Post {
-            identifier: post_id,
-            title: post_title
-        };
-        return post;
+        }]);
     }
 }
