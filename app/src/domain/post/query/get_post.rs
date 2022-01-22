@@ -1,12 +1,13 @@
 use diesel::prelude::*;
 use serde::Serialize;
+use ulid::Ulid;
 use crate::models::Post;
 use crate::schema::posts as posts_schema;
 use crate::utils::establish_connection;
 
 #[derive(Serialize)]
 pub struct PostReadModel {
-    identifier: u32,
+    identifier: String,
     title: String
 }
 
@@ -42,7 +43,7 @@ impl GetPostQuery for GetPostMySqlQuery {
 impl GetPostQuery for GetPostMockQuery {
     fn get_post() -> Vec<PostReadModel> {
         return Vec::from([PostReadModel {
-            identifier: 1,
+            identifier: Ulid::new().to_string(),
             title: "mock".to_string()
         }]);
     }

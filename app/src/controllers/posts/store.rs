@@ -1,19 +1,13 @@
 use actix_web::{HttpResponse, Responder};
-use diesel::RunQueryDsl;
-use crate::models::NewPosts;
-use crate::schema::posts;
-use crate::utils::establish_connection;
+use crate::domain::post::post_title::PostTitle;
+use crate::domain::post::post_factory::PostFactory;
+use crate::domain::post::post_factory::PostMySqlFactory;
+use crate::domain::post::post_repoditory::PostMySqlRepository;
+use crate::domain::post::post_repoditory::PostRepository;
 
 pub async fn index() -> impl Responder {
-    let connection = establish_connection();
-    let new_post = NewPosts {
-        title: String::from("hoge"),
-    };
-
-    diesel::insert_into(posts::table)
-        .values(&new_post)
-        .execute(&connection)
-        .expect("Error saving new posts.");
-
+    let mut post = PostMySqlFactory::new_post();
+    post.change_title(PostTitle { title: "hoge".to_string() });
+    PostMySqlRepository::save(post);
     HttpResponse::Ok().body("Data Stored.")
 }

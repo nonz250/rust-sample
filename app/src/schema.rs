@@ -1,6 +1,6 @@
 table! {
     posts (id) {
-        id -> Unsigned<Integer>,
+        id -> Varchar,
         title -> Varchar,
     }
 }
