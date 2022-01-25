@@ -1,3 +1,4 @@
+pub mod command;
 pub mod post;
 pub mod post_factory;
 pub mod post_identifier;

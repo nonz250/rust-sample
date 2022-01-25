@@ -13,7 +13,7 @@ impl PostFactory for PostMySqlFactory {
     fn new_post() -> Post {
         return Post::new(
             PostIdentifier { identifier: Ulid::new() },
-            PostTitle { title: "".to_string() }
+            PostTitle::new("".to_string()).unwrap()
         )
     }
 }
